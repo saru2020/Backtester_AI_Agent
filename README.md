@@ -3,7 +3,14 @@
 This project implements an AI-powered equity Backtester that calculates historical returns for stocks using LLM APIs and couple of Finance data APIs.
 
 ## Demo
-![demo](./media/Backtester_AI_Agent_demo_.mov)
+
+here's the working demo of this agent with this user input:
+> What would have been the return of Apple from 2020-01-01 to 2020-12-31?
+
+https://github.com/user-attachments/assets/441f4f66-432a-4a01-9820-99de4784d325
+
+
+
 
 
 ## Features
