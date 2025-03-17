@@ -289,7 +289,9 @@ here's the working demo of this agent with this user input:
 
 <!-- ![demo](../media/Backtester_AI_Agent_demo.mov) -->
 
-<img src="../media/Backtester_AI_Agent_demo.mov" alt="demo" style="width:400px;height:400px;">
+<!-- <img src="../media/Backtester_AI_Agent_demo.mov" alt="demo" style="width:400px;height:400px;"> -->
+
+![demo](./media/Backtester_AI_Agent_demo_.mov)
 
 #### Output:
 

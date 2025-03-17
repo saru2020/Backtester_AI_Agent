@@ -387,12 +387,7 @@ Building reliable AI agents requires more than just defining tools and prompts. 
 With these improvements, the equity backtester agent now reliably calculates historical returns for any stock, following the complete sequence of steps without hallucination or loops.
 
 
-##Demo
-
-here's the working demo of this agent with this user input:
-> What would have been the return of Apple from 2020-01-01 to 2020-12-31?
-
-![demo](../media/Backtester_AI_Agent_demo.mov)
+##Output
 
 ![output](../media/output.png)
 

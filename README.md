@@ -2,6 +2,10 @@
 
 This project implements an AI-powered equity Backtester that calculates historical returns for stocks using LLM APIs and couple of Finance data APIs.
 
+## Demo
+![demo](./media/Backtester_AI_Agent_demo_.mov)
+
+
 ## Features
 
 - Get stock symbols from company names
@@ -22,7 +26,7 @@ Refer [this blog](./blog/blog.md) for more details
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/saru2020/Backtester_AI_Agent.git
 cd equity_backtest_ai_agent_tryout
 ```
 
