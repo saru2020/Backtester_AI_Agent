@@ -7,13 +7,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
+base_url="http://127.0.0.1:1234/v1" #None
+LLM_API_KEY=os.getenv("LLM_API_KEY")
 
 client = OpenAI(
-    base_url="http://127.0.0.1:1234/v1",
-    api_key="something",
+    base_url=base_url,
+    api_key=LLM_API_KEY,
 )
-model = "deepseek-r1-distill-qwen-7b" # "deepseek-r1-distill-llama-8b",
+model = "deepseek-r1-distill-llama-8b" #"gpt-4o-mini"
 
 # --------------------------------------------------------------
 # Define the tool (function) that we want to call
@@ -378,30 +379,38 @@ while iteration_count < MAX_ITERATIONS:
                 # Check if we have the symbol and timestamps
                 if calculation_state["symbol"] is None:
                     error_message = {"error": "Cannot fetch historical prices without a valid symbol. Please call get_symbol first."}
-                    messages.append(
-                        {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                    )
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(error_message)
+                    })
                     continue
                 if calculation_state["start_date_timestamp"] is None or calculation_state["end_date_timestamp"] is None:
                     error_message = {"error": "Cannot fetch historical prices without valid timestamps. Please call convert_date_to_timestamp first."}
-                    messages.append(
-                        {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                    )
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(error_message)
+                    })
                     continue
                 
                 # Validate timestamp types
                 if not isinstance(calculation_state["start_date_timestamp"], int):
                     error_message = {"error": f"Invalid start_date_timestamp type: {type(calculation_state['start_date_timestamp'])}. Must be an integer."}
-                    messages.append(
-                        {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                    )
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(error_message)
+                    })
                     continue
                     
                 if not isinstance(calculation_state["end_date_timestamp"], int):
                     error_message = {"error": f"Invalid end_date_timestamp type: {type(calculation_state['end_date_timestamp'])}. Must be an integer."}
-                    messages.append(
-                        {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                    )
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(error_message)
+                    })
                     continue
                 
                 # Always override the arguments with stored values to prevent hallucination
@@ -411,36 +420,36 @@ while iteration_count < MAX_ITERATIONS:
                     "end_date_timestamp": calculation_state["end_date_timestamp"]
                 }
                 print(f"Using stored values for get_ticker_historical_prices: {args}")
-                
-                # Add a message to remind the model of the correct values
-                messages.append({
-                    "role": "system",
-                    "content": f"Using the following values for historical prices: symbol={calculation_state['symbol']}, start_timestamp={calculation_state['start_date_timestamp']}, end_timestamp={calculation_state['end_date_timestamp']}"
-                })
             
             # Special handling for get_return_percentage to ensure it uses the correct values
             elif name == "get_return_percentage":
                 # Check if we have the prices from get_ticker_historical_prices
                 if calculation_state["start_date_timestamp_price"] is None or calculation_state["end_date_timestamp_price"] is None:
                     error_message = {"error": "Cannot calculate return percentage without valid price data. Please call get_ticker_historical_prices first."}
-                    messages.append(
-                        {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                    )
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(error_message)
+                    })
                     continue
                 
                 # Validate price types
                 if not isinstance(calculation_state["start_date_timestamp_price"], (int, float)):
                     error_message = {"error": f"Invalid start_date_timestamp_price type: {type(calculation_state['start_date_timestamp_price'])}. Must be a number."}
-                    messages.append(
-                        {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                    )
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(error_message)
+                    })
                     continue
                     
                 if not isinstance(calculation_state["end_date_timestamp_price"], (int, float)):
                     error_message = {"error": f"Invalid end_date_timestamp_price type: {type(calculation_state['end_date_timestamp_price'])}. Must be a number."}
-                    messages.append(
-                        {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                    )
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(error_message)
+                    })
                     continue
                 
                 # Override the args with the stored values to prevent hallucination
@@ -449,20 +458,16 @@ while iteration_count < MAX_ITERATIONS:
                     "end_date_timestamp_price": calculation_state["end_date_timestamp_price"]
                 }
                 print(f"Using stored price values: {args}")
-                
-                # Add a message to remind the model of the correct values
-                messages.append({
-                    "role": "system",
-                    "content": f"Using the following values for return percentage calculation: start_price={calculation_state['start_date_timestamp_price']}, end_price={calculation_state['end_date_timestamp_price']}"
-                })
             
             result = call_function(name, args)
             if result is None:
                 print(f"Error: {name} returned None")
                 error_message = {"error": f"{name} failed to return valid data. Please try a different approach."}
-                messages.append(
-                    {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(error_message)}
-                )
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tool_call.id,
+                    "content": json.dumps(error_message)
+                })
                 
                 # If a critical tool in the sequence fails, reset the state for that step and subsequent steps
                 if name == "get_symbol":
@@ -517,27 +522,49 @@ while iteration_count < MAX_ITERATIONS:
                 if isinstance(result, dict):
                     calculation_state["return_percentage"] = result.get("return_percentage")
                     # Once we have the return percentage, add a message to help the model finish
-                    messages.append({
-                        "role": "system",
-                        "content": f"You have successfully calculated the return percentage: {calculation_state['return_percentage']}%. Please provide this as your final answer without making any more tool calls."
-                    })
+                    # messages.append({
+                    #     "role": "system",
+                    #     "content": f"You have successfully calculated the return percentage: {calculation_state['return_percentage']}%. Please provide this as your final answer without making any more tool calls."
+                    # })
                 
             print(f'Result: {result}')
             print(f'Current calculation state: {calculation_state}')
             
-            messages.append(
-                {"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(result)}
-            )
+            # Add the tool response to messages with the correct tool_call_id
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "content": json.dumps(result)
+            })
             
+            print(f"Messages: {messages}")
             # If we've completed the calculation, break out of the loop
             if name == "get_return_percentage" and calculation_state["return_percentage"] is not None:
                 print(f"Calculation complete! Return percentage: {calculation_state['return_percentage']}%")
                 # Force a final response with the result
                 try:
-                    final_message = f"The return for {calculation_state['symbol']} from {messages[1]['content']} was {calculation_state['return_percentage']}%."
+                    # Add the assistant's message with the final tool call first
+                    # messages.append(completion.choices[0].message)
+                    
+                    #these msgs fails with OpenAI apis
+                    # Add the tool response
+                    # messages.append({
+                    #     "role": "tool",
+                    #     "tool_call_id": tool_call.id,
+                    #     "content": json.dumps(calculation_state)
+                    # })
+                    
+                    # Add the final system message
+                    # final_message = f"The return for {calculation_state['symbol']} from {messages[1]['content']} was {calculation_state['return_percentage']}%."
+                    # messages.append({
+                    #     "role": "system",
+                    #     "content": final_message
+                    # })
+                    
+                    # Get the final response without any tools
                     final_completion = client.chat.completions.create(
                         model=model,
-                        messages=messages + [{"role": "system", "content": final_message}],
+                        messages=messages,
                         tools=[]
                     )
                     print("Final calculated response:", final_completion.choices[0].message.content)

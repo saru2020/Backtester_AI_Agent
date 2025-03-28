@@ -6,11 +6,14 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
+base_url="http://127.0.0.1:1234/v1" #None
+LLM_API_KEY=os.getenv("LLM_API_KEY")
+
 client = OpenAI(
-    base_url="http://127.0.0.1:1234/v1",
-    api_key="something",
+    base_url=base_url,
+    api_key=LLM_API_KEY,
 )
-model = "deepseek-r1-distill-llama-8b" #"deepseek-r1-distill-qwen-7b"
+model = "deepseek-r1-distill-qwen-7b" #"deepseek-r1-distill-qwen-7b" # "gpt-4o-mini" 
 
 # -------------- XX -------------- 
 # Models
