@@ -7,14 +7,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-base_url="http://127.0.0.1:1234/v1" #None
+# uncomment this for Local/LMStudio/DeepSeek API
+# base_url="http://127.0.0.1:1234/v1" #None
+# model = "deepseek-r1-distill-llama-8b" #"gpt-4o-mini"
+# uncomment this for OpenAI API
 LLM_API_KEY=os.getenv("LLM_API_KEY")
+model = "gpt-4o-mini"
+base_url = None
 
 client = OpenAI(
     base_url=base_url,
     api_key=LLM_API_KEY,
 )
-model = "deepseek-r1-distill-llama-8b" #"gpt-4o-mini"
 
 # --------------------------------------------------------------
 # Define the tool (function) that we want to call

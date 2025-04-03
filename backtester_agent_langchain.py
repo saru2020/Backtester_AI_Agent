@@ -125,11 +125,14 @@ def get_return_percentage(prices_str: str) -> str:
         logger.error(error_msg)
         return error_msg
 
-# base_url="http://127.0.0.1:1234/v1"
-# model="deepseek-r1-distill-qwen-7b" #NOTE: This model is not working as expected.
-base_url=None
-model="gpt-4o-mini"
+# uncomment this for Local/LMStudio/DeepSeek API
+# base_url="http://127.0.0.1:1234/v1" #None
+# model = "deepseek-r1-distill-llama-8b" #"gpt-4o-mini"
+# uncomment this for OpenAI API
 LLM_API_KEY=os.getenv("LLM_API_KEY")
+model = "gpt-4o-mini"
+base_url = None
+
 
 SYSTEM_PROMPT = """You are a stock return calculator. Your task is to calculate the return percentage for a stock between two dates.
 
@@ -214,7 +217,7 @@ agent = initialize_agent(
     agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
     verbose=True,
     handle_parsing_errors=True,
-    max_iterations=4,
+    max_iterations=5,
     early_stopping_method="force"
 )
 
@@ -238,7 +241,7 @@ def process_query(query: str) -> str:
 
 if __name__ == "__main__":
     # Example usage
-    query = "What would have been the return of asian paints from 2020-01-01 to 2020-12-31?"
+    query = "What would have been the return of apple from 2020-01-01 to 2020-12-31?"
     print("\nStarting calculation...")
     result = process_query(query)
     print(f"\nFinal result: {result}") 

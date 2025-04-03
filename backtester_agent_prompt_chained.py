@@ -6,14 +6,18 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-base_url="http://127.0.0.1:1234/v1" #None
+# uncomment this for Local/LMStudio/DeepSeek API
+# base_url="http://127.0.0.1:1234/v1" #None
+# model = "deepseek-r1-distill-llama-8b" #"gpt-4o-mini"
+# uncomment this for OpenAI API
 LLM_API_KEY=os.getenv("LLM_API_KEY")
+model = "gpt-4o-mini"
+base_url = None
 
 client = OpenAI(
     base_url=base_url,
     api_key=LLM_API_KEY,
 )
-model = "deepseek-r1-distill-qwen-7b" #"deepseek-r1-distill-qwen-7b" # "gpt-4o-mini" 
 
 # -------------- XX -------------- 
 # Models
@@ -177,7 +181,7 @@ def generate_user_response(strategy_result: StrategyResult):
 
 def main():
     """Main function to run the backtester agent"""
-    user_input = "I want to know how much I would have made if I had invested in amazon from 2023-01-01 to 2023-12-31"
+    user_input = "What would have been the return of Apple from 2020-01-01 to 2020-12-31?"
     print('user_input: ', user_input)
     strategy_details = extract_strategy_details(user_input)
     print('strategy_details: ', strategy_details)
