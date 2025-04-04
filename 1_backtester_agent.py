@@ -275,7 +275,7 @@ CRITICAL RULES:
 
 messages = [
     {"role": "system", "content": system_prompt},
-    {"role": "user", "content": "What would have been the return of Apple from 2020-01-01 to 2020-12-31?"}, # "whats the symbol for apple?"}, 
+    {"role": "user", "content": "What would have been the return of Apple from 2024-01-01 to 2024-12-31?"}, 
 ]
 
 # Track previous tool calls to detect loops

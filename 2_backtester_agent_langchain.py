@@ -177,7 +177,7 @@ llm = ChatOpenAI(
     model=model,
     base_url=base_url,
     api_key=LLM_API_KEY,
-    temperature=0,
+    temperature=0, # creativity / randomness
     max_tokens=1000,
     stop=["<think>", "###", "---", "**", "*", "```", "Explanation:", "Step", "First", "Next", "Then", "Finally", "Let me", "I will", "We need to"]
 )
@@ -241,7 +241,7 @@ def process_query(query: str) -> str:
 
 if __name__ == "__main__":
     # Example usage
-    query = "What would have been the return of apple from 2020-01-01 to 2020-12-31?"
+    query = "What would have been the return of apple from 2024-01-01 to 2024-12-31?"
     print("\nStarting calculation...")
     result = process_query(query)
     print(f"\nFinal result: {result}") 

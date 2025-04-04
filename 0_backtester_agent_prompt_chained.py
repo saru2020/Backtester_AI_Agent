@@ -181,7 +181,7 @@ def generate_user_response(strategy_result: StrategyResult):
 
 def main():
     """Main function to run the backtester agent"""
-    user_input = "What would have been the return of Apple from 2020-01-01 to 2020-12-31?"
+    user_input = "What would have been the return of Apple from 2024-01-01 to 2024-12-31?"
     print('user_input: ', user_input)
     strategy_details = extract_strategy_details(user_input)
     print('strategy_details: ', strategy_details)
