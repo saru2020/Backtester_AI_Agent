@@ -1,11 +1,13 @@
 import ast
-from contextlib import redirect_stdout
+import builtins
 import io
 import os
-from pathlib import Path
 import socket
 import sys
 import unittest
+from contextlib import redirect_stdout
+from pathlib import Path
+from types import CodeType, FunctionType
 from unittest.mock import Mock, patch
 from urllib.parse import parse_qs, quote, urlsplit
 
@@ -30,8 +32,21 @@ class MarketRequestTests(unittest.TestCase):
             functions = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in {
                 "get_symbol", "get_ticker_historical_prices",
             }]
-            namespace = {"requests": requests, "os": os, "logger": Mock(), "quote": quote}
-            exec(compile(ast.Module(body=functions, type_ignores=[]), str(source), "exec"), namespace)
+            namespace = {"__builtins__": vars(builtins), "requests": requests, "os": os, "logger": Mock(), "quote": quote}
+            compiled = compile(ast.Module(body=functions, type_ignores=[]), str(source), "exec")
+            for function in functions:
+                if function.decorator_list or function.args.defaults or function.args.kw_defaults:
+                    raise ValueError("Helper loading requires undecorated functions without defaults")
+                code = next(constant for constant in compiled.co_consts
+                            if isinstance(constant, CodeType) and constant.co_name == function.name)
+                helper = FunctionType(code, namespace)
+                helper.__annotations__ = {
+                    argument.arg: getattr(builtins, argument.annotation.id)
+                    for argument in function.args.args if argument.annotation is not None
+                }
+                if function.returns is not None:
+                    helper.__annotations__["return"] = getattr(builtins, function.returns.id)
+                namespace[function.name] = helper
             cls.helpers[source.name] = namespace
 
     def setUp(self):
@@ -113,9 +128,11 @@ class MarketRequestTests(unittest.TestCase):
     def test_timeout_errors_keep_existing_failure_contracts(self):
         for source in self.helpers:
             for function in ["get_symbol", "get_ticker_historical_prices"]:
-                with self.subTest(source=source, function=function):
-                    with patch.object(self.requests, "get", side_effect=self.requests.Timeout("Synthetic timeout")):
-                        self.assert_failed_request(source, function)
+                with (
+                    self.subTest(source=source, function=function),
+                    patch.object(self.requests, "get", side_effect=self.requests.Timeout("Synthetic timeout")),
+                ):
+                    self.assert_failed_request(source, function)
 
     def test_empty_search_and_history_results(self):
         for source in self.helpers:
