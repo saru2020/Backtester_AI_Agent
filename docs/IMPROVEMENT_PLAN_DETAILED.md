@@ -6,21 +6,21 @@ P1 means a blocked or misleading demonstration; P2 means maintainability or evid
 
 ## Prepared Branches
 
-These branches were prepared independently from the baseline. Status remains **Proposed** because publication and review are not verified. No code fix or CI workflow below is on the analysed main commit. PR numbers and links must come from actual publication, not inference.
+These branches were prepared independently from the baseline and are now open for review. No code fix or CI workflow below is on the analysed main commit. The linked PR numbers were checked against actual GitHub publication.
 
-| Item | Local branch | Recorded check on 2026-10-30 |
+| Item | Pull request | Recorded check on 2026-10-30 |
 | :--- | :--- | :--- |
-| IMP-01 | `fix/validate-return-inputs` | 8 synthetic return/date tests passed. |
-| IMP-02 | `fix/langchain-compatibility` | 5 synthetic compatibility tests passed; local install, dependency consistency and actionlint checks passed. |
-| IMP-03 | `fix/bounded-market-requests` | 6 synthetic HTTP tests passed; application-only Bandit returned zero findings. |
+| IMP-01 | [#2](https://github.com/saru2020/Backtester_AI_Agent/pull/2) | 8 synthetic return/date tests passed. |
+| IMP-02 | [#3](https://github.com/saru2020/Backtester_AI_Agent/pull/3) | 5 synthetic compatibility tests, dependency consistency and actionlint passed; hosted CI passed. |
+| IMP-03 | [#4](https://github.com/saru2020/Backtester_AI_Agent/pull/4) | 6 synthetic HTTP tests passed; application-only Bandit returned zero findings. |
 
-Each branch also passed narrow fatal/undefined-name lint and whitespace checks. These are separate dated branch checks, not a combined suite, whole-program coverage or a real market/model guarantee. The helper tests avoid module initialisation; the compatibility tests use predetermined fake-model actions and mocked market responses. See [verification limits](PROJECT_ANALYSIS_DETAILED.md#recorded-checks).
+Each branch also passed narrow fatal/undefined-name lint and whitespace checks. Separate independent combined-tree validation passed all 19 tests. None of these checks establishes whole-program coverage or a real market/model guarantee. The helper tests avoid module initialisation; the compatibility tests use predetermined fake-model actions and mocked market responses. See [verification limits](PROJECT_ANALYSIS_DETAILED.md#recorded-checks).
 
 ## Fixes And Compatibility
 
 ### IMP-01: Validate Prices And Dates
 
-P1. Effort S. Risk low, limited to invalid-input behaviour. Dependencies: none. Status: Proposed, prepared on `fix/validate-return-inputs`.
+P1. Effort S. Risk low, limited to invalid-input behaviour. Dependencies: none. Status: Addressed in open [#2](https://github.com/saru2020/Backtester_AI_Agent/pull/2).
 
 **Problem/evidence:** [Price/date risks](PROJECT_ANALYSIS_DETAILED.md#risks-and-code-quality) occur in [script 0][script-0], [script 1][script-1] and [script 2][script-2]: zero division, non-finite returns, reversed ranges and inconsistent date boundaries.
 
@@ -30,7 +30,7 @@ P1. Effort S. Risk low, limited to invalid-input behaviour. Dependencies: none. 
 
 ### IMP-02: Restore LangChain Compatibility And Setup
 
-P1. Effort S. Risk medium, framework compatibility. Dependencies: none for the isolated fix. Status: Proposed, prepared on `fix/langchain-compatibility`.
+P1. Effort S. Risk medium, framework compatibility. Dependencies: none for the isolated fix. Status: Addressed in open [#3](https://github.com/saru2020/Backtester_AI_Agent/pull/3).
 
 **Problem/evidence:** [Script 2 imports][script-2] fail with the [dated dependency resolution](PROJECT_ANALYSIS_DETAILED.md#stack-and-dependency-snapshot); baseline declares neither runtime nor offline checks.
 
@@ -40,7 +40,7 @@ P1. Effort S. Risk medium, framework compatibility. Dependencies: none for the i
 
 ### IMP-03: Bound And Encode Market Requests
 
-P1. Effort S. Risk low, request formatting and failure timing. Dependencies: none. Status: Proposed, prepared on `fix/bounded-market-requests`.
+P1. Effort S. Risk low, request formatting and failure timing. Dependencies: none. Status: Addressed in open [#4](https://github.com/saru2020/Backtester_AI_Agent/pull/4).
 
 **Problem/evidence:** The [six HTTP helpers](PROJECT_ANALYSIS_DETAILED.md#risks-and-code-quality) in [script 0][script-0], [script 1][script-1] and [script 2][script-2] omit timeouts and component encoding. Script 0 search omits status checking.
 
@@ -94,7 +94,7 @@ P2. Effort M. Risk medium, resolution changes. Dependencies: IMP-02 and the comb
 
 ### IMP-08: Establish Combined Offline Checks
 
-P2. Effort M. Risk low, test/delivery changes. Dependencies: IMP-01, IMP-02 and IMP-03 initially; IMP-04/IMP-05 extend module and transcript coverage. Status: Proposed; only initial CI is prepared under IMP-02.
+P2. Effort M. Risk low, test/delivery changes. Dependencies: IMP-01, IMP-02 and IMP-03 initially; IMP-04/IMP-05 extend module and transcript coverage. Status: Partly addressed by the checks in [#3](https://github.com/saru2020/Backtester_AI_Agent/pull/3) and independent 19-test combined validation; broader orchestration coverage remains proposed.
 
 **Problem/evidence:** Baseline has zero tests, failing full lint, partial typing and no CI/hooks. [Recorded checks](PROJECT_ANALYSIS_DETAILED.md#recorded-checks) cover separate branches, while [delivery metadata](PROJECT_ANALYSIS_DETAILED.md#security-and-delivery) cannot exclude external application automation.
 
@@ -116,7 +116,7 @@ P2. Effort S. Risk low, documentation only. Dependencies: no code merge; publica
 
 ## Open Issues And Order
 
-The saved GitHub query on 2026-10-30 returned **zero open issues**. There are no issue numbers to classify, close or reference. The same snapshot contained no open PRs; later publication is not verified by these documents.
+The saved GitHub query on 2026-10-30 returned **zero open issues**. There are no issue numbers to classify, close or reference. The three implementation PRs linked above were subsequently opened and remain unmerged.
 
 1. Quick wins: review IMP-01, IMP-02 and IMP-03 independently, then combine their overlapping script changes for IMP-08 checks. Publish documentation under IMP-09 with verified statuses and actual PR links.
 2. Next: IMP-04 and IMP-05 make complete offline execution testable; IMP-06 makes the output's financial meaning explicit. Evaluate IMP-07 with the combined tests available.

@@ -6,7 +6,7 @@ Based on `main` at [4cc2fef](https://github.com/saru2020/Backtester_AI_Agent/tre
 
 Three learning examples translate a company/date question into a closing-price percentage change. There is no portfolio engine, strategy execution, order placement or hosted service. All three source files were inspected. The recorded size is 766 Python code lines, excluding 183 comment and 152 blank lines.
 
-The baseline history contains eight commits from 2025-03-18 to 2025-04-04, including filename changes that the old README missed. The 2026-10-30 GitHub snapshot returned zero open issues and zero open PRs. Local preparations below are separate from this baseline; no fix or CI workflow is asserted to be on main.
+The baseline history contains eight commits from 2025-03-18 to 2025-04-04, including filename changes that the old README missed. The initial 2026-10-30 GitHub snapshot returned zero open issues and zero open PRs. Implementation PRs #2, #3 and #4 were subsequently opened and are linked in the [plan](IMPROVEMENT_PLAN_DETAILED.md#prepared-branches). They remain separate from this baseline; no fix or CI workflow is asserted to be on main.
 
 ## Stack And Dependency Snapshot
 
@@ -84,7 +84,7 @@ python -I -B -m unittest discover -s tests -v
 
 Use that only in a prepared branch with its tested environment, not as evidence of tests on baseline. All three branches also passed the narrow Ruff selector `E9,F63,F7,F82` and whitespace checks. The HTTP branch's application-only Bandit check returned zero findings. The compatibility branch recorded a fresh dependency installation, `python -m pip check`, repeat tests and actionlint success; these were local checks, not an Ubuntu Actions run.
 
-The helper suites deliberately avoid module initialisation. The compatibility suite disables dotenv and tracing and supplies predetermined model actions, so its successful workflow does not prove independent reasoning, correct argument propagation for arbitrary queries or real provider compatibility. Saved negative controls rejected baseline behaviour. Combined branch validation, whole-entry-point tests for scripts 0/1, coverage, live market/model paths and cross-platform execution are not established.
+The helper suites deliberately avoid module initialisation. The compatibility suite disables dotenv and tracing and supplies predetermined model actions, so its successful workflow does not prove independent reasoning, correct argument propagation for arbitrary queries or real provider compatibility. Saved negative controls rejected baseline behaviour. Independent combined-branch validation passed all 19 offline tests; PR #3's Ubuntu checks also passed. Whole-entry-point tests for scripts 0/1, measured coverage and live market/model paths remain unverified.
 
 ## Risks And Code Quality
 
