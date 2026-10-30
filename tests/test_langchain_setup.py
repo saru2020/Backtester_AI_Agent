@@ -1,12 +1,12 @@
-from contextlib import redirect_stdout
 import importlib.util
 import io
 import json
 import os
-from pathlib import Path
 import socket
 import sys
 import unittest
+from contextlib import redirect_stdout
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 
