@@ -2,6 +2,7 @@ from openai import OpenAI
 from pydantic import BaseModel, Field
 import requests
 import datetime
+import math
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -70,6 +71,8 @@ def convert_date_to_timestamp(start_date: str, end_date: str):
     dt1 = dt1.replace(tzinfo=datetime.timezone.utc)  # Set UTC timezone
     dt2 = datetime.datetime.strptime(end_date, '%Y-%m-%d')  
     dt2 = dt2.replace(tzinfo=datetime.timezone.utc)  # Set UTC timezone
+    if dt1 > dt2:
+        raise ValueError("Start date must not be after end date")
     dt2 = dt2 + datetime.timedelta(days=1)  # Move to the next day to get the EOD timestamp
     return int(dt1.timestamp()), int(dt2.timestamp())
 
@@ -131,7 +134,14 @@ def get_ticker_historical_prices(symbol: str, start_date_timestamp: int, end_dat
     
     
 def get_return_percentage(start_date_price: float, end_date_price: float):
-    return ((end_date_price - start_date_price) / start_date_price) * 100
+    if not math.isfinite(start_date_price) or start_date_price <= 0:
+        raise ValueError("Starting price must be finite and greater than zero")
+    if not math.isfinite(end_date_price) or end_date_price < 0:
+        raise ValueError("Ending price must be finite and non-negative")
+    return_percentage = ((end_date_price - start_date_price) / start_date_price) * 100
+    if not math.isfinite(return_percentage):
+        raise ValueError("Return percentage must be finite")
+    return return_percentage
 
 
 # -------------- XX -------------- 

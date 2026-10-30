@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional, Tuple, Any
 import datetime
+import math
 import os
 import json
 import requests
@@ -61,8 +62,12 @@ def convert_date_to_timestamp(date_str: str) -> str:
     logger.info(f"convert_date_to_timestamp called with date_str: {date_str}")
     try:
         start_date, end_date = date_str.split(",")
-        start = int(datetime.datetime.strptime(start_date.strip(), "%Y-%m-%d").timestamp())
-        end = int(datetime.datetime.strptime(end_date.strip(), "%Y-%m-%d").timestamp())
+        start_date = datetime.datetime.strptime(start_date.strip(), "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+        end_date = datetime.datetime.strptime(end_date.strip(), "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+        if start_date > end_date:
+            raise ValueError("Start date must not be after end date")
+        start = int(start_date.timestamp())
+        end = int((end_date + datetime.timedelta(days=1)).timestamp())
         result = f"{start},{end}"
         logger.info(f"convert_date_to_timestamp returning: {result}")
         return result
@@ -116,7 +121,13 @@ def get_return_percentage(prices_str: str) -> str:
     logger.info(f"get_return_percentage called with prices_str: {prices_str}")
     try:
         start_price, end_price = map(float, prices_str.split(","))
+        if not math.isfinite(start_price) or start_price <= 0:
+            raise ValueError("Starting price must be finite and greater than zero")
+        if not math.isfinite(end_price) or end_price < 0:
+            raise ValueError("Ending price must be finite and non-negative")
         return_pct = ((end_price - start_price) / start_price) * 100
+        if not math.isfinite(return_pct):
+            raise ValueError("Return percentage must be finite")
         result = f"{return_pct:.2f}%"
         logger.info(f"get_return_percentage returning: {result}")
         return result
