@@ -2,6 +2,7 @@ from openai import OpenAI
 import requests
 import json
 import datetime
+import math
 import os
 from dotenv import load_dotenv
 
@@ -54,6 +55,8 @@ def convert_date_to_timestamp(start_date: str, end_date: str):
         dt1 = dt1.replace(tzinfo=datetime.timezone.utc)  # Set UTC timezone
         dt2 = datetime.datetime.strptime(end_date, '%Y-%m-%d')  
         dt2 = dt2.replace(tzinfo=datetime.timezone.utc)  # Set UTC timezone
+        if dt1 > dt2:
+            raise ValueError("Start date must not be after end date")
         dt2 += datetime.timedelta(days=1)  # Move to the next day to get the EOD timestamp
         timestamps = (int(dt1.timestamp()), int(dt2.timestamp()))
         print(f"Converted timestamps: {timestamps}")
@@ -134,12 +137,19 @@ def get_return_percentage(start_date_timestamp_price: float, end_date_timestamp_
         return None
         
     try:
+        if not math.isfinite(start_date_timestamp_price) or start_date_timestamp_price <= 0:
+            raise ValueError("Starting price must be finite and greater than zero")
+        if not math.isfinite(end_date_timestamp_price) or end_date_timestamp_price < 0:
+            raise ValueError("Ending price must be finite and non-negative")
+        return_percentage = ((end_date_timestamp_price - start_date_timestamp_price) / start_date_timestamp_price) * 100
+        if not math.isfinite(return_percentage):
+            raise ValueError("Return percentage must be finite")
         result = {
-            "return_percentage": ((end_date_timestamp_price - start_date_timestamp_price) / start_date_timestamp_price) * 100
+            "return_percentage": return_percentage
         }
         print(f"Calculated return percentage: {result['return_percentage']}%")
         return result
-    except (TypeError, ZeroDivisionError) as e:
+    except (TypeError, ValueError, ZeroDivisionError) as e:
         print(f"Error calculating return percentage: {e}")
         return None
 
