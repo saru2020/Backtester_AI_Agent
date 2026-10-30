@@ -6,8 +6,8 @@ import requests
 import logging
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langchain.agents import AgentType, Tool, initialize_agent
-from langchain.tools import StructuredTool
+from langchain_classic.agents import AgentType, initialize_agent
+from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field
 
 # Configure logging
