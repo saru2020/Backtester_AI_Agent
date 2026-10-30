@@ -1,127 +1,36 @@
 # Backtester AI Agent
 
-This project demonstrates three different implementations of a stock backtesting agent that calculates historical returns using AI:
+Three Python learning examples calculate first-to-last closing-price returns using prompt chaining, OpenAI function calling or LangChain. This is not a production strategy backtester.
 
-1. **Prompt Chaining Implementation** (`backtester_agent_prompt_chained.py`)
-   - Uses pure prompt chaining to guide the model through the calculation steps
-   - Simpler implementation but less structured
-   - Good for understanding the basic flow of the calculation
+## Documentation
 
-2. **Function Calling Implementation** (`backtester_agent.py`)
-   - Uses OpenAI's function calling feature
-   - Partially agentic approach with structured tool definitions
-   - Better error handling and validation
-   - More robust than prompt chaining
+- [Project analysis](docs/PROJECT_ANALYSIS.md): scope and risks.
+- [Detailed analysis](docs/PROJECT_ANALYSIS_DETAILED.md): code, configuration and evidence.
+- [Improvement plan](docs/IMPROVEMENT_PLAN.md): priorities.
+- [Detailed plan](docs/IMPROVEMENT_PLAN_DETAILED.md): acceptance criteria and branch status.
 
-3. **LangChain Implementation** (`backtester_agent_langchain.py`)
-   - Uses the LangChain framework for full agentic behavior
-   - Most structured and maintainable implementation
-   - Built-in tools and agent management
-   - Best for production use and extensibility
+## Quick Start
 
-All three implementations provide the same core functionality:
-- Calculate historical returns for stocks
-- Use Yahoo Finance API for data
-- Handle date ranges and price calculations
-- Provide detailed step-by-step explanations
+Offline checks on 2026-10-30 used Python 3.12.13; baseline declares no runtime or lockfile. Preparation commands are illustrative, not a verified live setup:
 
-## Features
-
-- Calculate historical returns for any stock
-- Support for custom date ranges
-- Detailed step-by-step explanations
-- Error handling and validation
-- Multiple implementation approaches
-
-## Setup
-
-1. Create a virtual environment:
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-2. Install dependencies:
+Configure `LLM_API_KEY`, `YAHOO_FINANCE_SEARCH_API` and `YAHOO_FINANCE_QUERY_API` through your environment. All scripts also load dotenv. Search configuration ends before the query value; history configuration ends before the ticker. See [configuration contracts](docs/PROJECT_ANALYSIS_DETAILED.md#configuration).
+
+The hard-coded model is `gpt-4o-mini`, with `base_url=None`. These entry-point commands require trusted endpoints and deliberate model access. Real runs remain unverified and can incur charges. Script 2 is blocked by baseline LangChain imports with the freshly resolved dependencies:
+
 ```bash
-pip install -r requirements.txt
+python 0_backtester_agent_prompt_chained.py
+python 1_backtester_agent.py
+python 2_backtester_agent_langchain.py
 ```
 
-3. Set up environment variables in `.env`:
-```
-YAHOO_FINANCE_SEARCH_API=your_search_api_url
-YAHOO_FINANCE_QUERY_API=your_query_api_url
-```
+Scripts 0 and 1 construct clients on import; script 1 also executes its conversation loop. Each contains an editable Apple/date example, not an interactive CLI. No original tests exist; prepared fixes and synthetic branch tests are not on main.
 
-## Usage
+## Historical Guides
 
-Choose the implementation that best suits your needs:
-
-1. For simple usage with prompt chaining:
-```bash
-python backtester_agent_prompt_chained.py
-```
-
-2. For function calling implementation:
-```bash
-python backtester_agent.py
-```
-
-3. For LangChain implementation:
-```bash
-python backtester_agent_langchain.py
-```
-
-Example query:
-```
-What would have been the return of Apple from 2020-01-01 to 2020-12-31?
-```
-
-## Implementation Details
-
-### 1. Prompt Chaining (`backtester_agent_prompt_chained.py`)
-- Uses sequential prompts to guide the model
-- Each step is handled by a separate prompt
-- Simpler to understand but less robust
-- Good for learning and prototyping
-
-### 2. Function Calling (`backtester_agent.py`)
-- Uses OpenAI's function calling feature
-- Structured tool definitions
-- Better error handling
-- More robust than prompt chaining
-- Good for production use
-
-### 3. LangChain (`backtester_agent_langchain.py`)
-_NOTE: I couldn't get this working with the DeepSeek model in my local but tested it only with OpenAI model(gpt-4o-mini)_
-- Uses LangChain framework
-- Full agentic behavior
-- Built-in tools and agent management
-- Most maintainable and extensible
-- Best for complex applications
-
-## Demo
-
-here's the working demo of this agent with this user input:
-> What would have been the return of Apple from 2020-01-01 to 2020-12-31?
-
-https://github.com/user-attachments/assets/441f4f66-432a-4a01-9820-99de4784d325
-
-## Error Handling
-
-The script includes comprehensive error handling for:
-- Invalid company names
-- Date format errors
-- API connection issues
-- Data validation
-- Calculation errors
-
-## Limitations
-
-- Requires valid API endpoints for Yahoo Finance data
-- Date range must be in YYYY-MM-DD format
-- Company names must be recognizable by the Yahoo Finance API
-- Historical data availability depends on the stock's listing date
-
-## Contributing
-
-Feel free to submit issues and enhancement requests! 
+[Original walkthrough](blog/blog.md), [refined walkthrough](blog/blog_refined.md), [debugging journey](blog/agent_debugging_journey.md) and [demo](https://github.com/user-attachments/assets/441f4f66-432a-4a01-9820-99de4784d325). Their setup and reliability claims are historical.
