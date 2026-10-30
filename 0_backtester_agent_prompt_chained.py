@@ -4,6 +4,7 @@ import requests
 import datetime
 from dotenv import load_dotenv
 import os
+from urllib.parse import quote
 load_dotenv()
 
 # uncomment this for Local/LMStudio/DeepSeek API
@@ -80,9 +81,11 @@ def get_symbol(search_query: str):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
     }
     response = requests.get(
-        f"{os.getenv('YAHOO_FINANCE_SEARCH_API')}{search_query}&lang=en-US&region=US&quotesCount=6",
-        headers=headers
+        f"{os.getenv('YAHOO_FINANCE_SEARCH_API')}{quote(search_query, safe='')}&lang=en-US&region=US&quotesCount=6",
+        headers=headers,
+        timeout=(5, 30),
     )
+    response.raise_for_status()
     # print('inside get_symbol - response: ', response)
     data = response.json()
     # print('inside get_symbol - data: ', data)
@@ -99,8 +102,9 @@ def get_ticker_historical_prices(symbol: str, start_date_timestamp: int, end_dat
     }
     try:
         response = requests.get(
-            f"{os.getenv('YAHOO_FINANCE_QUERY_API')}{symbol}?period1={start_date_timestamp}&period2={end_date_timestamp}&interval=1d",
-            headers=headers
+            f"{os.getenv('YAHOO_FINANCE_QUERY_API')}{quote(symbol, safe='')}?period1={start_date_timestamp}&period2={end_date_timestamp}&interval=1d",
+            headers=headers,
+            timeout=(5, 30),
         )
         response.raise_for_status()  # Raise an exception for bad status codes
         data = response.json()

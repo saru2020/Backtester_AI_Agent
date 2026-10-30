@@ -5,6 +5,7 @@ import json
 import requests
 import logging
 from dotenv import load_dotenv
+from urllib.parse import quote
 from langchain_openai import ChatOpenAI
 from langchain.agents import AgentType, Tool, initialize_agent
 from langchain.tools import StructuredTool
@@ -37,8 +38,9 @@ def get_symbol(company_name: str) -> str:
     }
     try:
         response = requests.get(
-            f"{os.getenv('YAHOO_FINANCE_SEARCH_API')}{company_name}&lang=en-US&region=US&quotesCount=6",
-            headers=headers
+            f"{os.getenv('YAHOO_FINANCE_SEARCH_API')}{quote(company_name, safe='')}&lang=en-US&region=US&quotesCount=6",
+            headers=headers,
+            timeout=(5, 30),
         )
         response.raise_for_status()
         data = response.json()
@@ -84,8 +86,9 @@ def get_ticker_historical_prices(input_str: str) -> str:
         }
         
         response = requests.get(
-            f"{os.getenv('YAHOO_FINANCE_QUERY_API')}{symbol}?period1={start_timestamp}&period2={end_timestamp}&interval=1d",
-            headers=headers
+            f"{os.getenv('YAHOO_FINANCE_QUERY_API')}{quote(symbol, safe='')}?period1={start_timestamp}&period2={end_timestamp}&interval=1d",
+            headers=headers,
+            timeout=(5, 30),
         )
         response.raise_for_status()
         data = response.json()
