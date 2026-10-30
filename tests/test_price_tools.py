@@ -1,14 +1,16 @@
 import ast
-from contextlib import redirect_stdout
+import builtins
 import datetime
 import io
 import math
 import os
-from pathlib import Path
 import socket
 import sys
 import time
 import unittest
+from contextlib import redirect_stdout
+from pathlib import Path
+from types import CodeType, FunctionType
 from unittest.mock import Mock, patch
 
 
@@ -29,8 +31,21 @@ class ReturnPercentageTests(unittest.TestCase):
             functions = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in {
                 "get_return_percentage", "convert_date_to_timestamp",
             }]
-            namespace = {"datetime": datetime, "math": math, "logger": Mock()}
-            exec(compile(ast.Module(body=functions, type_ignores=[]), str(source), "exec"), namespace)
+            namespace = {"__builtins__": vars(builtins), "datetime": datetime, "math": math, "logger": Mock()}
+            compiled = compile(ast.Module(body=functions, type_ignores=[]), str(source), "exec")
+            for function in functions:
+                if function.decorator_list or function.args.defaults or function.args.kw_defaults:
+                    raise ValueError("Helper loading requires undecorated functions without defaults")
+                code = next(constant for constant in compiled.co_consts
+                            if isinstance(constant, CodeType) and constant.co_name == function.name)
+                helper = FunctionType(code, namespace)
+                helper.__annotations__ = {
+                    argument.arg: getattr(builtins, argument.annotation.id)
+                    for argument in function.args.args if argument.annotation is not None
+                }
+                if function.returns is not None:
+                    helper.__annotations__["return"] = getattr(builtins, function.returns.id)
+                namespace[function.name] = helper
             cls.helpers[source.name] = namespace
 
     def setUp(self):

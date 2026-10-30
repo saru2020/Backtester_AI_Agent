@@ -62,8 +62,8 @@ def convert_date_to_timestamp(date_str: str) -> str:
     logger.info(f"convert_date_to_timestamp called with date_str: {date_str}")
     try:
         start_date, end_date = date_str.split(",")
-        start_date = datetime.datetime.strptime(start_date.strip(), "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
-        end_date = datetime.datetime.strptime(end_date.strip(), "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+        start_date = datetime.datetime.strptime(start_date.strip(), "%Y-%m-%d").replace(tzinfo=datetime.timezone(datetime.timedelta(0)))
+        end_date = datetime.datetime.strptime(end_date.strip(), "%Y-%m-%d").replace(tzinfo=datetime.timezone(datetime.timedelta(0)))
         if start_date > end_date:
             raise ValueError("Start date must not be after end date")
         start = int(start_date.timestamp())
